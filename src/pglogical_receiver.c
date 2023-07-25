@@ -95,6 +95,9 @@ typedef struct
 MtmConfig  *receiver_mtm_cfg;
 bool		receiver_mtm_cfg_valid;
 
+/* Parallel transaction apply control */
+bool MtmAllowParallel;
+
 /* Stream functions */
 static int64 fe_recvint64(char *buf);
 
@@ -998,7 +1001,7 @@ pglogical_receiver_main(Datum main_arg)
 							 * non-tx DDL should be executed by parallel
 							 * workers
 							 */
-							MtmExecute(stmt, msg_len, &rctx->w, false);
+							MtmExecute(stmt, msg_len, &rctx->w, !MtmAllowParallel);
 						}
 						else
 						{
@@ -1050,7 +1053,7 @@ pglogical_receiver_main(Datum main_arg)
 								MtmSpillToFile(spill_file, buf.data, buf.used);
 								MtmCloseSpillFile(spill_file);
 								MtmExecute(spill_info.data, spill_info.len,
-										   &rctx->w, false);
+										   &rctx->w, !MtmAllowParallel);
 								spill_file = -1;
 								resetStringInfo(&spill_info);
 							}
@@ -1062,7 +1065,7 @@ pglogical_receiver_main(Datum main_arg)
 											* execute serially to avoid
 											* reordering conflicts.
 											*/
-										   stmt[1] == PGLOGICAL_COMMIT);
+										   stmt[1] == PGLOGICAL_COMMIT || !MtmAllowParallel);
 						}
 						else if (spill_file >= 0)
 						{

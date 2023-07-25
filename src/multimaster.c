@@ -687,6 +687,19 @@ NULL);
 		NULL
 		);
 
+	DefineCustomBoolVariable(
+		"multimaster.allow_parallel_apply",
+		"Allow parallel apply",
+		NULL,
+		&MtmAllowParallel,
+		true,
+		PGC_BACKEND,
+		0,
+		NULL,
+		NULL,
+		NULL
+		);	
+
 	for (i = 0; mtm_log_gucs[i].name; i++)
 	{
 		MtmLogGuc *guc = &mtm_log_gucs[i];

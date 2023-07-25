@@ -238,6 +238,9 @@ extern bool MtmWaitPeerCommits;
 extern bool MtmNo3PC;
 extern bool MtmBinaryBasetypes;
 
+/* Parallel transaction apply control */
+extern bool MtmAllowParallel;
+
 extern void MtmSleep(int64 interval);
 extern TimestampTz MtmGetIncreasingTimestamp(void);
 extern bool MtmAllApplyWorkersFinished(void);
